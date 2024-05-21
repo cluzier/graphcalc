@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Detail, Toast, showToast } from "@raycast/api";
 import { evaluate } from "mathjs";
-import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalGridLines, LineSeries } from "react-vis";
+import {
+  XYPlot,
+  XAxis,
+  YAxis,
+  HorizontalGridLines,
+  VerticalGridLines,
+  LineSeries,
+} from "react-vis";
 import ReactDOMServer from "react-dom/server";
 import "react-vis/dist/style.css";
 
@@ -15,7 +22,10 @@ function parseExpression(expression: string, xValues: number[]) {
   });
 }
 
-function renderGraphToSVG(expression: string, chartData: { x: number; y: number }[]) {
+function renderGraphToSVG(
+  expression: string,
+  chartData: { x: number; y: number }[],
+) {
   return ReactDOMServer.renderToStaticMarkup(
     <svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
       <g transform="translate(40,40)">
@@ -25,7 +35,10 @@ function renderGraphToSVG(expression: string, chartData: { x: number; y: number 
           <VerticalGridLines />
           <XAxis />
           <YAxis />
-          <LineSeries data={chartData} style={{ stroke: "blue", strokeWidth: 2, fill: "transparent" }} />
+          <LineSeries
+            data={chartData}
+            style={{ stroke: "blue", strokeWidth: 2, fill: "transparent" }}
+          />
         </XYPlot>
       </g>
     </svg>,
@@ -45,7 +58,10 @@ export default function Graph({
   const [result, setResult] = useState<string | null>(null);
 
   useEffect(() => {
-    const isSimpleEquation = /^\s*([-+]?\d+(\.\d+)?\s*([-+*/]\s*([-+]?\d+(\.\d+)?))*)\s*$/.test(expression);
+    const isSimpleEquation =
+      /^\s*([-+]?\d+(\.\d+)?\s*([-+*/]\s*([-+]?\d+(\.\d+)?))*)\s*$/.test(
+        expression,
+      );
     const xValues = Array.from({ length: 100 }, (_, i) => (i - 50) / 10);
     const yValues = parseExpression(expression, xValues);
     const data = xValues.map((x, i) => ({ x, y: yValues[i] }));
@@ -54,7 +70,10 @@ export default function Graph({
       try {
         const calculatedResult = evaluate(expression);
         setResult(calculatedResult.toString());
-        setHistory((prevHistory) => [...prevHistory, `${expression} = ${calculatedResult.toString()}`]);
+        setHistory((prevHistory) => [
+          ...prevHistory,
+          `${expression} = ${calculatedResult.toString()}`,
+        ]);
         showToast({
           style: Toast.Style.Success,
           title: "Calculation Successful",
@@ -65,7 +84,8 @@ export default function Graph({
         showToast({
           style: Toast.Style.Failure,
           title: "Calculation Error",
-          message: "The expression could not be evaluated. Please check the syntax.",
+          message:
+            "The expression could not be evaluated. Please check the syntax.",
         });
       }
     } else {

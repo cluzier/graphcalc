@@ -1,7 +1,7 @@
 // components/FeedbackForm.tsx
 
 import { Form, Action, ActionPanel } from "@raycast/api";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
   const [feedback, setFeedback] = useState("");
@@ -24,7 +24,11 @@ const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
         value={feedback}
         onChange={setFeedback}
       />
-      <Form.TextField id="email" title="Email" placeholder="example@feedback.com" />
+      <Form.TextField
+        id="email"
+        title="Email"
+        placeholder="example@feedback.com"
+      />
       <Form.Checkbox id="remember" label="Remember my email" />
       <ActionPanel>
         <Action.SubmitForm title="Submit Feedback" onSubmit={handleSubmit} />

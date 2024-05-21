@@ -1,5 +1,12 @@
-import { ActionPanel, Form, Action, showToast, useNavigation, Toast } from "@raycast/api";
-import { useState } from "react";
+import {
+  ActionPanel,
+  Form,
+  Action,
+  showToast,
+  useNavigation,
+  Toast,
+} from "@raycast/api";
+import React, { useState } from "react";
 import Graph from "./components/Graph";
 import FeedbackForm from "./components/FeedbackForm";
 
@@ -19,7 +26,13 @@ export default function Command() {
       return;
     }
     // If validation passes, navigate to the Graph component
-    push(<Graph expression={expression} history={history} setHistory={setHistory} />);
+    push(
+      <Graph
+        expression={expression}
+        history={history}
+        setHistory={setHistory}
+      />,
+    );
   };
 
   // const handleFeedback = () => {
