@@ -4,7 +4,7 @@
   "title": "GraphCalc",
   "description": "GraphCalc is a versatile graphing calculator extension that enables users to visualize mathematical expressions dynamically. With GraphCalc, you can effortlessly plot functions, equations, and data points directly within the Raycast interface.",
   "icon": "extension_icon.png",
-  "author": "conner_luzier",
+  "author": "cluzier",
   "categories": [
     "Data",
     "Applications",
