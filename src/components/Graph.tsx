@@ -28,16 +28,20 @@ function renderGraphToSVG(
 ) {
   return ReactDOMServer.renderToStaticMarkup(
     <svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
-      <g transform="translate(40,40)">
-        <rect width="920" height="720" fill="transparent" />
-        <XYPlot width={920} height={720}>
-          <HorizontalGridLines />
-          <VerticalGridLines />
-          <XAxis />
-          <YAxis />
+      <g transform="translate(40,150)">
+        <rect
+          width="920"
+          height="500"
+          style={{ fill: "#ffffff", stroke: "#000000" }}
+        />
+        <XYPlot width={900} height={500} style={{ color: "#000000" }}>
+          <HorizontalGridLines style={{ stroke: "#e0e0e0" }} />
+          <VerticalGridLines style={{ stroke: "#e0e0e0" }} />
+          <XAxis style={{ stroke: "#777777" }} />
+          <YAxis style={{ stroke: "#777777" }} />
           <LineSeries
             data={chartData}
-            style={{ stroke: "blue", strokeWidth: 2, fill: "transparent" }}
+            style={{ stroke: "#00ff00", strokeWidth: 2, fill: "transparent" }}
           />
         </XYPlot>
       </g>
