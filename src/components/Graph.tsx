@@ -34,7 +34,7 @@ function renderGraphToSVG(
           <rect
             width="920"
             height="500"
-            style={{ fill: "#ffffff", stroke: "#000000" }}
+            style={{ fill: "transparent", stroke: "#000000" }}
           />
           <XYPlot width={900} height={500} style={{ color: "#000000" }}>
             <HorizontalGridLines style={{ stroke: "#e0e0e0" }} />
@@ -43,7 +43,7 @@ function renderGraphToSVG(
             <YAxis style={{ stroke: "#777777" }} />
             <LineSeries
               data={chartData}
-              style={{ stroke: "#00ff00", strokeWidth: 2, fill: "transparent" }}
+              style={{ stroke: "#F5B041", strokeWidth: 2, fill: "transparent" }}
             />
           </XYPlot>
         </g>
