@@ -58,11 +58,9 @@ function renderGraphToSVG(
 export default function Graph({
   expression,
   history,
-  setHistory,
 }: {
   expression: string;
   history: string[];
-  setHistory: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const [chartData, setChartData] = useState<{ x: number; y: number }[]>([]);
   const [result, setResult] = useState<string | null>(null);
@@ -97,10 +95,6 @@ export default function Graph({
       try {
         const calculatedResult = evaluate(expression);
         setResult(calculatedResult.toString());
-        setHistory((prevHistory) => [
-          ...prevHistory,
-          `${expression} = ${calculatedResult.toString()}`,
-        ]);
         showToast({
           style: Toast.Style.Success,
           title: "Calculation Successful",
@@ -121,7 +115,6 @@ export default function Graph({
       await showGeneratingToast();
       setChartData(data);
       setResult(null);
-      setHistory((prevHistory) => [...prevHistory, expression]);
       closeGeneratingToast();
     };
 
@@ -134,7 +127,7 @@ export default function Graph({
     return () => {
       closeGeneratingToast();
     };
-  }, [expression, setHistory]);
+  }, [expression]);
 
   return (
     <Detail
