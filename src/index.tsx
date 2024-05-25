@@ -98,7 +98,7 @@ export default function Command(
             const expressionLowerCase = expression.toLowerCase();
             return (
               expressionLowerCase !== exprLowerCase &&
-              exprLowerCase.includes(expressionLowerCase.toLowerCase())
+              exprLowerCase.includes(expressionLowerCase)
             );
           })
           .sort()
