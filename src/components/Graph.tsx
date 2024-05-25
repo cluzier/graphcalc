@@ -15,7 +15,15 @@ import "react-vis/dist/style.css";
 function parseExpression(expression: string, xValues: number[]) {
   return xValues.map((x) => {
     try {
-      return evaluate(expression, { x });
+      const result = evaluate(expression, { x });
+      // The best solution would be to divide the block rendering into infinite sections.
+      // Current version will show incorrect values.
+      if (result === Infinity) {
+        return Number.MAX_VALUE;
+      } else if (result === -Infinity) {
+        return -Number.MAX_VALUE;
+      }
+      return result;
     } catch (error) {
       console.error("Evaluation error:", error);
       return NaN;
@@ -66,7 +74,6 @@ export default function Graph({
   const [result, setResult] = useState<string | null>(null);
   const [renderHistory, setRenderHistory] = useState<string[]>([]);
   const toastRef = useRef<Toast | null>(null);
-
   useEffect(() => {
     setRenderHistory(
       (history || []).filter((exp: string) => exp != expression),
