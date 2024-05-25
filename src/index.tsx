@@ -49,6 +49,15 @@ export default function Command() {
     setShowFeedbackForm(false);
   };
 
+  const handleClearHistory = () => {
+    setHistory([]);
+    showToast({
+      style: Toast.Style.Success,
+      title: "History Cleared",
+      message: "The history has been successfully cleared.",
+    });
+  };
+
   return (
     <>
       {!showFeedbackForm ? (
@@ -56,6 +65,7 @@ export default function Command() {
           actions={
             <ActionPanel>
               <Action.SubmitForm title="Plot Graph" onSubmit={handleSubmit} />
+              <Action title="Clear History" onAction={handleClearHistory} />
               {/* <Action title="Provide Feedback" onAction={handleFeedback} /> */}
             </ActionPanel>
           }
