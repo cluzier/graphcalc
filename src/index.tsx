@@ -1,10 +1,10 @@
 import {
   ActionPanel,
-  Form,
   Action,
   showToast,
   useNavigation,
   Toast,
+  List,
 } from "@raycast/api";
 import { useLocalStorage } from "@raycast/utils";
 import React, { useState } from "react";
@@ -18,11 +18,16 @@ export default function Command() {
     [],
   );
   const [showFeedbackForm, setShowFeedbackForm] = useState(false); // Track whether to display the feedback form
+  const renderHistory = history || [];
   const { push } = useNavigation();
 
   const updateHistory = (expression: string) => {
-    const currentHistory = history || [];
-    setHistory([expression, ...currentHistory.slice(0, 100)]);
+    setHistory([expression, ...renderHistory.slice(0, 100)]);
+  };
+
+  const submit = (expression: string) => {
+    updateHistory(expression);
+    push(<Graph expression={expression} history={history || []} />);
   };
 
   const handleSubmit = () => {
@@ -34,9 +39,12 @@ export default function Command() {
       });
       return;
     }
-    // If validation passes, navigate to the Graph component
-    updateHistory(expression);
-    push(<Graph expression={expression} history={history || []} />);
+    submit(expression);
+  };
+
+  const handleSelect = (selectedExpression: string) => {
+    setExpression(selectedExpression);
+    submit(selectedExpression);
   };
 
   // const handleFeedback = () => {
@@ -58,25 +66,57 @@ export default function Command() {
     });
   };
 
+  const filteredHistory =
+    expression.trim() !== ""
+      ? renderHistory
+          .filter((expr) => {
+            const exprLowerCase = expr.toLowerCase();
+            const expressionLowerCase = expression.toLowerCase();
+            return (
+              expressionLowerCase !== exprLowerCase &&
+              exprLowerCase.includes(expressionLowerCase.toLowerCase())
+            );
+          })
+          .sort()
+      : renderHistory;
+
   return (
     <>
       {!showFeedbackForm ? (
-        <Form
-          actions={
-            <ActionPanel>
-              <Action.SubmitForm title="Plot Graph" onSubmit={handleSubmit} />
-              <Action title="Clear History" onAction={handleClearHistory} />
-              {/* <Action title="Provide Feedback" onAction={handleFeedback} /> */}
-            </ActionPanel>
-          }
+        <List
+          searchBarPlaceholder="Enter an equation or expression (e.g., sin(x))"
+          onSearchTextChange={setExpression}
+          searchText={expression}
         >
-          <Form.TextField
-            id="expression"
-            placeholder="Enter an equation or expression (e.g., sin(x))"
-            value={expression}
-            onChange={setExpression}
-          />
-        </Form>
+          {expression.trim() !== "" && (
+            <List.Item
+              key="new"
+              title={expression}
+              actions={
+                <ActionPanel>
+                  <Action title="Plot Graph" onAction={handleSubmit} />
+                  <Action title="Clear History" onAction={handleClearHistory} />
+                </ActionPanel>
+              }
+            />
+          )}
+          {filteredHistory.map((expr, index) => (
+            <List.Item
+              key={index}
+              title={expr}
+              actions={
+                <ActionPanel>
+                  <Action
+                    title="Plot Graph"
+                    onAction={() => handleSelect(expr)}
+                  />
+                  <Action title="Clear History" onAction={handleClearHistory} />
+                  {/* <Action title="Provide Feedback" onAction={handleFeedback} /> */}
+                </ActionPanel>
+              }
+            />
+          ))}
+        </List>
       ) : (
         <FeedbackForm onClose={handleCloseFeedbackForm} />
       )}
