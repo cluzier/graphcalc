@@ -28,9 +28,14 @@ export default function Command(
   } = useLocalStorage<string[]>("history", []);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false); // Track whether to display the feedback form
   const [historyInitialized, setHistoryInitialized] = useState(false);
+  const [renderHistorySorted, setRenderHistorySorted] = useState<string[]>([]);
 
   const renderHistory = history || [];
   const { push } = useNavigation();
+
+  useEffect(() => {
+    setRenderHistorySorted((history || []).sort());
+  }, [history]);
 
   const updateHistory = (expression: string) => {
     setHistory([expression, ...renderHistory.slice(0, 100)]);
@@ -92,16 +97,9 @@ export default function Command(
 
   const filteredHistory =
     expression.trim() !== ""
-      ? renderHistory
-          .filter((expr) => {
-            const exprLowerCase = expr.toLowerCase();
-            const expressionLowerCase = expression.toLowerCase();
-            return (
-              expressionLowerCase !== exprLowerCase &&
-              exprLowerCase.includes(expressionLowerCase)
-            );
-          })
-          .sort()
+      ? renderHistorySorted.filter((expr) => {
+          return expr !== expression && expr.includes(expression);
+        })
       : renderHistory;
 
   return (
