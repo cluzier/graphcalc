@@ -64,7 +64,14 @@ export default function Graph({
 }) {
   const [chartData, setChartData] = useState<{ x: number; y: number }[]>([]);
   const [result, setResult] = useState<string | null>(null);
+  const [renderHistory, setRenderHistory] = useState<string[]>([]);
   const toastRef = useRef<Toast | null>(null);
+
+  useEffect(() => {
+    setRenderHistory(
+      (history || []).filter((exp: string) => exp != expression),
+    );
+  }, [history]);
 
   useEffect(() => {
     const isSimpleEquation =
@@ -136,9 +143,13 @@ export default function Graph({
           <Detail.Metadata.Label title="Current" text={expression} />
           <Detail.Metadata.Separator />
           <Detail.Metadata.TagList title="History">
-            {history.map((expr, index) => (
-              <Detail.Metadata.TagList.Item key={index} text={expr} />
-            ))}
+            {renderHistory.length > 0 ? (
+              renderHistory.map((expr, index) => (
+                <Detail.Metadata.TagList.Item key={index} text={expr} />
+              ))
+            ) : (
+              <Detail.Metadata.TagList.Item text="No history" />
+            )}
           </Detail.Metadata.TagList>
         </Detail.Metadata>
       }
