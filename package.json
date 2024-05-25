@@ -19,7 +19,15 @@
       "name": "index",
       "title": "GraphCalc",
       "description": "Graphing Calculator",
-      "mode": "view"
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "operation",
+          "placeholder": "Operation",
+          "type": "text",
+          "required": false
+        }
+      ]
     }
   ],
   "dependencies": {

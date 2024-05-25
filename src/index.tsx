@@ -5,19 +5,30 @@ import {
   useNavigation,
   Toast,
   List,
+  LaunchProps,
 } from "@raycast/api";
 import { useLocalStorage } from "@raycast/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Graph from "./components/Graph";
 import FeedbackForm from "./components/FeedbackForm";
 
-export default function Command() {
+interface CommandArguments {
+  operation?: string;
+}
+
+export default function Command(
+  props: LaunchProps<{ arguments: CommandArguments }>,
+) {
+  const { operation } = props.arguments;
   const [expression, setExpression] = useState("");
-  const { value: history, setValue: setHistory } = useLocalStorage<string[]>(
-    "history",
-    [],
-  );
+  const {
+    value: history,
+    setValue: setHistory,
+    isLoading: isHistoryLoading,
+  } = useLocalStorage<string[]>("history", []);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false); // Track whether to display the feedback form
+  const [historyInitialized, setHistoryInitialized] = useState(false);
+
   const renderHistory = history || [];
   const { push } = useNavigation();
 
@@ -65,6 +76,19 @@ export default function Command() {
       message: "The history has been successfully cleared.",
     });
   };
+
+  useEffect(() => {
+    if (!isHistoryLoading && !historyInitialized) {
+      setHistoryInitialized(true);
+      if (operation) {
+        submit(operation);
+      }
+    }
+  }, [isHistoryLoading, historyInitialized, operation]);
+
+  if (operation && isHistoryLoading) {
+    return <></>;
+  }
 
   const filteredHistory =
     expression.trim() !== ""
