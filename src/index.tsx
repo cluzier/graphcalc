@@ -34,7 +34,8 @@ export default function Command(
   const { push } = useNavigation();
 
   useEffect(() => {
-    setRenderHistorySorted((history || []).sort());
+    const currentHistory = history || [];
+    setRenderHistorySorted([...currentHistory].sort());
   }, [history]);
 
   const updateHistory = (expression: string) => {
