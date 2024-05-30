@@ -109,12 +109,10 @@ export default function Command(
       searchBarPlaceholder="Enter an equation or expression (e.g., sin(x))"
       onSearchTextChange={(text) => setExpression(text || "")} // Ensure text is always a string
       searchText={expression} // Ensure searchText is always defined
-      selectedItemId={"0"}
     >
       {isEmpty && (
         <List.Item
           key="new"
-          id="new"
           title={expression}
           actions={
             <ActionPanel>
@@ -127,7 +125,6 @@ export default function Command(
       {filteredHistory.map((expr, index) => (
         <List.Item
           key={index}
-          id={`${index}`}
           title={expr}
           actions={
             <ActionPanel>
