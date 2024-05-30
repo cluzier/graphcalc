@@ -10,7 +10,6 @@ import {
 import { useLocalStorage } from "@raycast/utils";
 import React, { useEffect, useState } from "react";
 import Graph from "./components/Graph";
-import FeedbackForm from "./components/FeedbackForm";
 
 interface CommandArguments {
   operation?: string;
@@ -26,7 +25,6 @@ export default function Command(
     setValue: setHistory,
     isLoading: isHistoryLoading,
   } = useLocalStorage<string[]>("history", []);
-  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [historyInitialized, setHistoryInitialized] = useState(false);
   const [renderHistorySorted, setRenderHistorySorted] = useState<string[]>([]);
 
@@ -45,6 +43,7 @@ export default function Command(
   const submit = (expression: string) => {
     updateHistory(expression);
     push(<Graph expression={expression} />);
+    setExpression("");
   };
 
   const handleSubmit = () => {
@@ -64,10 +63,6 @@ export default function Command(
     submit(selectedExpression);
   };
 
-  const handleCloseFeedbackForm = () => {
-    setShowFeedbackForm(false);
-  };
-
   const handleClearHistory = () => {
     setHistory([]);
     showToast({
@@ -75,6 +70,10 @@ export default function Command(
       title: "History Cleared",
       message: "The history has been successfully cleared.",
     });
+  };
+
+  const handleEditExpression = (expr: string) => {
+    setExpression(expr);
   };
 
   useEffect(() => {
@@ -97,52 +96,52 @@ export default function Command(
     );
   }
 
-  const filteredHistory =
-    expression.trim() !== ""
-      ? renderHistorySorted.filter((expr) => {
-          return expr !== expression && expr.includes(expression);
-        })
-      : renderHistory;
+  const isEmpty = expression.trim() !== "";
+
+  const filteredHistory = isEmpty
+    ? renderHistorySorted.filter((expr) => {
+        return expr !== expression && expr.includes(expression);
+      })
+    : renderHistory;
 
   return (
-    <>
-      {!showFeedbackForm ? (
-        <List
-          searchBarPlaceholder="Enter an equation or expression (e.g., sin(x))"
-          onSearchTextChange={(text) => setExpression(text || "")} // Ensure text is always a string
-          searchText={expression} // Ensure searchText is always defined
-        >
-          {expression.trim() !== "" && (
-            <List.Item
-              key="new"
-              title={expression}
-              actions={
-                <ActionPanel>
-                  <Action title="Plot Graph" onAction={handleSubmit} />
-                  <Action title="Clear History" onAction={handleClearHistory} />
-                </ActionPanel>
-              }
-            />
-          )}
-          {filteredHistory.map((expr, index) => (
-            <List.Item
-              key={index}
-              title={expr}
-              actions={
-                <ActionPanel>
-                  <Action
-                    title="Plot Graph"
-                    onAction={() => handleSelect(expr)}
-                  />
-                  <Action title="Clear History" onAction={handleClearHistory} />
-                </ActionPanel>
-              }
-            />
-          ))}
-        </List>
-      ) : (
-        <FeedbackForm onClose={handleCloseFeedbackForm} />
+    <List
+      searchBarPlaceholder="Enter an equation or expression (e.g., sin(x))"
+      onSearchTextChange={(text) => setExpression(text || "")} // Ensure text is always a string
+      searchText={expression} // Ensure searchText is always defined
+      selectedItemId={"0"}
+    >
+      {isEmpty && (
+        <List.Item
+          key="new"
+          id="new"
+          title={expression}
+          actions={
+            <ActionPanel>
+              <Action title="Plot Graph" onAction={handleSubmit} />
+              <Action title="Clear History" onAction={handleClearHistory} />
+            </ActionPanel>
+          }
+        />
       )}
-    </>
+      {filteredHistory.map((expr, index) => (
+        <List.Item
+          key={index}
+          id={`${index}`}
+          title={expr}
+          actions={
+            <ActionPanel>
+              <Action title="Plot Graph" onAction={() => handleSelect(expr)} />
+              <Action title="Clear History" onAction={handleClearHistory} />
+              <Action
+                title="Edit Expression"
+                shortcut={{ modifiers: ["cmd"], key: "e" }}
+                onAction={() => handleEditExpression(expr)}
+              />
+            </ActionPanel>
+          }
+        />
+      ))}
+    </List>
   );
 }
